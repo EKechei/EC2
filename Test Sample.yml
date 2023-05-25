@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  myEC2Instance:
+   Type: AWS::EC2::Instance
+   DependsOn: secGroupName
+   Properties:
+      KeyName: Eddy
+      ImageId: ami-0889a44b331db0194
+      InstanceType: t2.micro
+      SecurityGroups: 
+      - !Ref secGroupName
+      UserData: !Base64 |
+       #!/bin/bash -ex
+       yum update -y
+       yum install -y httpd
+       systemctl start httpd
+       systemctl enable httpd       
+
+  secGroupName:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: Test SG
+      GroupDescription: Allow http traffic
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+            
